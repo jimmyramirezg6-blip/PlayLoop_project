@@ -1,0 +1,12 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Zip. de la base de datos
+
+/playloop_dataset.zip
