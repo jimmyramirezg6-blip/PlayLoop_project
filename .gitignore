@@ -8,7 +8,8 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Zip. de la base de datos
-
+data/raw/*.csv
+/grafico_principal.png
 /playloop_dataset.zip
 
 
