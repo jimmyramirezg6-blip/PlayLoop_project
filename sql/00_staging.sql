@@ -93,7 +93,7 @@ CREATE TABLE users(
 	canal_adquisicion	VARCHAR,
 	pais				VARCHAR, 
 	plataforma			VARCHAR, 
-	version_app			DOUBLE PRECISION
+	version_app			VARCHAR
 );
 
 \copy users FROM 'data/processed/users.csv' WITH (FORMAT csv, HEADER true, DELIMITER ',', ENCODING 'UTF-8')
