@@ -29,12 +29,12 @@ SELECT
 FROM mau, dau; 
 
 -- D1 RETETION = PLAYERS WITH A SESSIN ON THE DAY (INSTALL + 1) / COHORT MATURE FOR D1.
-WITH cohorte AS (
+WITH cohort AS (
 	-- Only players whoinstalled at least 1 day ago (already elegible for D1)
 	SELECT user_id FROM users
 	WHERE DATE '2024-07-22' - fecha_instalacion::DATE >=1
 ), 
-retetion AS (
+retained AS (
 	SELECT DISTINCT s.user_id
 	FROM sessions s
 	JOIN users u ON s.user_id = u.user_id
@@ -42,11 +42,31 @@ retetion AS (
 	WHERE s.fecha::DATE - u.fecha_instalacion::DATE = 1
 )
 SELECT 
-	COUNT(DISTINCT c.user_id) AS cohorte, 
+	COUNT(DISTINCT c.user_id) AS cohort, 
 	COUNT(DISTINCT r.user_id) AS retenidos, 
 	ROUND(100.0 * COUNT(r.user_id) / COUNT(c.user_id), 1) AS retetion_d1_pct 
-FROM cohorte c
-LEFT JOIN retetion r ON c.user_id = r.user_id
+FROM cohort c
+LEFT JOIN retained r ON c.user_id = r.user_id
+
+-- D1/D7/D30 RETETION
+WITH days(n) AS (VALUES(1),(7),(30))
+SELECT 
+	d.n AS day, 
+	COUNT(DISTINCT u.user_id) AS cohort, 
+	COUNT(DISTINCT s.user_id) AS retained, 
+	ROUND(100.0 * COUNT(DISTINCT s.user_id)/COUNT(DISTINCT u.user_id),1) AS retetion_pct
+FROM days d
+-- Cohort mature at each day:installed at least d.n days ago	
+JOIN users u ON (DATE '2024-07-22' - u.fecha_instalacion) >= d.n
+-- Sessions that falls exactly on the player's day d.n of life
+LEFT JOIN sessions s
+	ON s.user_id = u.user_id
+	AND	(s.fecha::DATE - u.fecha_instalacion) = d.n
+GROUP BY d.n
+ORDER BY d.n;
+
+
+
 
 
 
