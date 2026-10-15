@@ -30,7 +30,7 @@ FROM mau, dau;
 
 -- D1 RETETION = PLAYERS WITH A SESSIN ON THE DAY (INSTALL + 1) / COHORT MATURE FOR D1.
 WITH cohort AS (
-	-- Only players whoinstalled at least 1 day ago (already elegible for D1)
+	-- Only players who installed at least 1 day ago (already elegible for D1)
 	SELECT user_id FROM users
 	WHERE DATE '2024-07-22' - fecha_instalacion::DATE >=1
 ), 
@@ -65,8 +65,21 @@ LEFT JOIN sessions s
 GROUP BY d.n
 ORDER BY d.n;
 
-
-
+-- D30 RETETION 
+WITH d30_retained AS(
+	SELECT DISTINCT s.user_id 
+	FROM sessions s 
+	JOIN users u ON s.user_id = u.user_id
+	WHERE s.fecha::DATE - u.fecha_instalacion::DATE = 30
+), 
+mature_cohort AS (
+	-- -- Only players who installed at least 30 days ago
+	SELECT user_id FROM users
+	WHERE (DATE '2024-07-22' - fecha_instalacion) >= 30
+)
+SELECT 
+	ROUND(100.0 * (SELECT COUNT(*) FROM d30_retained) / (SELECT COUNT(*) FROM mature_cohort),1)  AS d30_correct,
+	ROUND(100.0 * (SELECT COUNT(*) FROM d30_retained) / (SELECT COUNT(*) FROM users),1)  AS d30_incorrect; 
 
 
 
