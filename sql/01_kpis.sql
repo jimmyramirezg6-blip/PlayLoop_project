@@ -107,3 +107,10 @@ SELECT
 FROM levels
 
 
+-- SESSIONS PLAYESRS AND AVERAGE DURATION
+SELECT 	
+	ROUND(COUNT(*) * 1.0 / COUNT(DISTINCT user_id), 2) AS players_sessions, 
+	ROUND(AVG(
+		CASE WHEN duracion_segundos  BETWEEN 1 AND 3600 THEN duracion_segundos END 
+	), 1) AS avg_duration_sc
+FROM sessions;
