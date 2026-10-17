@@ -102,15 +102,30 @@ WITH levels AS (
 SELECT
 	reach_level_6,
 	reach_level_7,
-	-- % of those reaching level 6 who no not move on to level 7
+	-- % of those reaching level 6 who no not move on to level 7s
 	ROUND(100.0 * (reach_level_6 - reach_level_7) / reach_level_6, 1) AS dropoff_pct
 FROM levels
 
 
--- SESSIONS PLAYESRS AND AVERAGE DURATION
+-- SESSIONS PER PLAYESRS AND AVERAGE DURATION
 SELECT 	
 	ROUND(COUNT(*) * 1.0 / COUNT(DISTINCT user_id), 2) AS players_sessions, 
 	ROUND(AVG(
 		CASE WHEN duracion_segundos  BETWEEN 1 AND 3600 THEN duracion_segundos END 
 	), 1) AS avg_duration_sc
 FROM sessions;
+
+
+-- ACTIVITY BY DAY OF THE WEEK
+SELECT
+	EXTRACT(ISODOW FROM fecha) AS day_num,
+	CASE EXTRACT(ISODOW FROM fecha)
+		WHEN 1 THEN 'Monday' WHEN 2 THEN 'Tuesday' WHEN 3 THEN 'Wednesday'
+		WHEN 4 THEN 'Thursday'WHEN 5 THEN 'Friday' WHEN 6 THEN 'Saturday'
+		WHEN 7 THEN 'Sunday'
+	END AS day_name,
+	COUNT(DISTINCT user_id) AS active_players,
+	COUNT(*) AS sessions
+FROM sessions
+GROUP BY day_num, day_name
+ORDER BY day_num
