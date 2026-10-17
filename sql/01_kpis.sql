@@ -81,7 +81,29 @@ SELECT
 	ROUND(100.0 * (SELECT COUNT(*) FROM d30_retained) / (SELECT COUNT(*) FROM mature_cohort),1)  AS d30_correct,
 	ROUND(100.0 * (SELECT COUNT(*) FROM d30_retained) / (SELECT COUNT(*) FROM users),1)  AS d30_incorrect; 
 
+-- UNIQUE PLAYERS PER LEVEL
+SELECT 
+	nivel,
+	COUNT(DISTINCT user_id) AS players, 
+	ROUND(100.0 * COUNT(DISTINCT user_id) / (SELECT COUNT(*) FROM users), 1) AS total_pc
+FROM matches
+WHERE nivel IN (1,3,6,10)
+GROUP BY nivel
+ORDER BY nivel;
 
+-- DROP-OFF BETWEEN LEVEL 6 AND 7: WHERE MOST PEOPLE GET STUCK DURING ONBOARDING
+WITH levels AS (
+	SELECT 
+		COUNT(DISTINCT CASE WHEN nivel >= 6 THEN user_id END) AS reach_level_6,
+		COUNT(DISTINCT CASE WHEN nivel >= 7 THEN user_id END) AS reach_level_7 
+	FROM matches
+)
 
+SELECT
+	reach_level_6,
+	reach_level_7,
+	-- % of those reaching level 6 who no not move on to level 7
+	ROUND(100.0 * (reach_level_6 - reach_level_7) / reach_level_6, 1) AS dropoff_pct
+FROM levels
 
 
