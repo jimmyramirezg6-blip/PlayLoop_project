@@ -29,3 +29,55 @@ SELECT
 	ROUND(
 		100.0 * (SELECT SUM(importe::NUMERIC) * 0.70 FROM purchases) / ((SELECT SUM(importe::NUMERIC) * 0.70 FROM purchases)+ (SELECT SUM(ingreso::NUMERIC)FROM ad_revenue))
 		, 2) AS net_iap_pct
+
+-- CONCENTRATION: HOW MUCH IAP REVENUE IS CONTRIBUTED BY THE TOP 2% SPENDING PLAYERS 
+WITH spend_per_players AS (
+	SELECT
+		user_id, 
+		SUM(importe::NUMERIC) AS spend
+	FROM purchases
+	GROUP BY user_id
+), 
+ranking AS (
+	SELECT 
+		spend, 
+		ROW_NUMBER() OVER (ORDER BY spend DESC) AS rn, 
+		COUNt(*) OVER() AS total_players
+	FROM spend_per_players
+)
+SELECT 
+	CAST(CEIL(0.02 * total_players) AS INT) AS whales_top2pct, 
+	ROUND(
+		100.0 * SUM(spend) FILTER(WHERE rn <= CEIL(0.02 * total_players))
+		/SUM(spend)
+	,2) AS pct_whale_revenue
+FROM ranking
+GROUP BY total_players
+
+
+-- CROSS INCOME BY PRODUCTS
+SELECT 
+	ip.tipo, 
+	COUNT(*) purchases,
+ 	ROUND(SUM(p.importe::NUMERIC),2) AS cross_income
+FROM purchases p
+JOIN iap_products ip ON p.producto_id = ip.product_id
+GROUP BY tipo
+ORDER BY cross_income DESC;
+
+
+-- PATER CONVERSION BY PLATAFORM
+WITH payer AS (
+	SELECT DISTINCT user_id FROM purchases
+)
+SELECT 
+	u.plataforma, 
+	COUNT(DISTINCT u.user_id) AS players, 
+	COUNT(DISTINCT p.user_id) AS payers, 
+	ROUND(
+		100.0 * COUNT(DISTINCT p.user_id) / COUNT(DISTINCT u.user_id)
+	, 2)  AS payer_pct
+FROM users u
+LEFT JOIN payer p ON u.user_id = p.user_id
+GROUP BY u.plataforma
+ORDER BY payer_pct
