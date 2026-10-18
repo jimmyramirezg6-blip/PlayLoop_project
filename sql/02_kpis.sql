@@ -66,7 +66,7 @@ GROUP BY tipo
 ORDER BY cross_income DESC;
 
 
--- PATER CONVERSION BY PLATAFORM
+-- PAYER CONVERSION BY PLATAFORM
 WITH payer AS (
 	SELECT DISTINCT user_id FROM purchases
 )
@@ -80,4 +80,20 @@ SELECT
 FROM users u
 LEFT JOIN payer p ON u.user_id = p.user_id
 GROUP BY u.plataforma
-ORDER BY payer_pct
+ORDER BY payer_pct;
+
+
+-- ARPPU : AVERAGE REVENNUE PER PAYING USER
+
+WITH spend_per_player AS (
+	SELECT
+		user_id, 
+		SUM(importe) AS spend
+	FROM purchases
+	GROUP BY user_id
+)
+SELECT
+	ROUND(AVG(spend::NUMERIC), 2) AS avg_arppu, 
+	ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY spend::NUMERIC)) AS median_arppu, 
+	ROUND(MAX(spend::NUMERIC), 2) AS max_spend
+FROM spend_per_player;
