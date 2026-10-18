@@ -84,7 +84,6 @@ ORDER BY payer_pct;
 
 
 -- ARPPU : AVERAGE REVENNUE PER PAYING USER
-
 WITH spend_per_player AS (
 	SELECT
 		user_id, 
