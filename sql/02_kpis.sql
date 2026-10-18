@@ -21,3 +21,11 @@ SELECT
 		+ (SELECT SUM(ingreso::NUMERIC) FROM ad_revenue))
 		/ (SELECT COUNT(*) FROM users)
 	,3) AS net_arpu;
+
+-- BREAKDOWN OF NET INCOME BETWEEN THE TWO CHANNELS: PURCHASES (NET IAP) AND ADS
+SELECT 
+	ROUND((SELECT SUM(importe::NUMERIC) * 0.70 FROM purchases),2) AS net_iap, 
+	ROUND((SELECT SUM(ingreso::NUMERIC) FROM ad_revenue),2) AS ad_revenue, 
+	ROUND(
+		100.0 * (SELECT SUM(importe::NUMERIC) * 0.70 FROM purchases) / ((SELECT SUM(importe::NUMERIC) * 0.70 FROM purchases)+ (SELECT SUM(ingreso::NUMERIC)FROM ad_revenue))
+		, 2) AS net_iap_pct
