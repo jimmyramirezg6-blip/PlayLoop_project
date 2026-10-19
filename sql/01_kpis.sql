@@ -1,3 +1,4 @@
+
 -- DAU = DAILY ACTIVE USERS
 WITH actives_per_day AS (
 	SELECT 
