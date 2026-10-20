@@ -1,6 +1,3 @@
-
-
-
 -- CPI BY CHANNEL
 WITH inst AS (SELECT canal_adquisicion AS canal, COUNT(*) AS n FROM users GROUP BY canal), 
 	 spend AS (SELECT canal, SUM(gasto::NUMERIC) AS g FROM ua_spend GROUP BY canal)
