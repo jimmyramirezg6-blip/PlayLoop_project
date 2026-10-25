@@ -12,7 +12,7 @@ data/raw/*.csv
 data/processed/*.csv
 /grafico_principal.png
 /playloop_dataset.zip
-
+outputs/grafico_principal.png
 
 # archivos
 nota.txt
