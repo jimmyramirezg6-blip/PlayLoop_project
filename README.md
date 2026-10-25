@@ -27,6 +27,7 @@ BrightCart Project/
 └── requirements.txt        # Python dependencies (pandas, matplotlib, seaborn, etc.)
 
 ```
+```
 erDiagram
     %% Relaciones (Entity-Relationship)
     USERS ||--o{ SESSIONS : "registra"
@@ -78,6 +79,7 @@ erDiagram
         float gasto
         int instalaciones
     }
+```
 
 ## 🧰 Tech Stack 
 - Analysis: Python, Pandas, PostgreSQL
