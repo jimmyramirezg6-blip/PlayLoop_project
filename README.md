@@ -27,6 +27,57 @@ BrightCart Project/
 └── requirements.txt        # Python dependencies (pandas, matplotlib, seaborn, etc.)
 
 ```
+erDiagram
+    %% Relaciones (Entity-Relationship)
+    USERS ||--o{ SESSIONS : "registra"
+    USERS ||--o{ MATCHES : "juega"
+    USERS ||--o{ PURCHASES_IAP : "realiza"
+    USERS ||--o{ INGRESOS_ADS : "genera"
+    UA_SPEND ||--o{ USERS : "adquiere mediante"
+    IAP_PRODUCTS ||--o{ PURCHASES_IAP : "es comprado en"
+
+    %% Definición de Tablas y Columnas
+    USERS {
+        varchar user_id PK
+        varchar canal FK
+        varchar pais
+        varchar plataforma
+    }
+
+    SESSIONS {
+        varchar user_id FK
+        date fecha
+        int duracion
+    }
+
+    MATCHES {
+        varchar user_id FK
+        int nivel
+        varchar resultado
+    }
+
+    PURCHASES_IAP {
+        varchar user_id FK
+        varchar producto_id FK
+        float importe
+    }
+
+    INGRESOS_ADS {
+        varchar user_id FK
+        varchar tipo_ad
+        float ingreso
+    }
+
+    IAP_PRODUCTS {
+        varchar producto_id PK
+        float precio
+    }
+
+    UA_SPEND {
+        varchar canal PK "por canal, no por jugador"
+        float gasto
+        int instalaciones
+    }
 
 ## 🧰 Tech Stack 
 - Analysis: Python, Pandas, PostgreSQL
