@@ -80,6 +80,7 @@ erDiagram
         float gasto
         int instalaciones
     }
+```
 
 ## 🧰 Tech Stack 
 - Analysis: Python, Pandas, PostgreSQL
